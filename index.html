@@ -299,6 +299,71 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
   padding: 20px;
   overflow-y: auto;
 }
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 300;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.picker-overlay.show { display: flex; }
+.picker-sheet {
+  background: #fff;
+  width: 100%;
+  max-width: 500px;
+  max-height: 70vh;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px 10px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.picker-search {
+  padding: 10px 16px;
+}
+.picker-search input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+}
+.picker-list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  padding: 0 8px 16px;
+}
+.picker-item {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1.05rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.picker-item:active, .picker-item.selected {
+  background: #e8f0fe;
+  color: var(--primary);
+  font-weight: 600;
+}
+.picker-item.assigned {
+  border-left: 3px solid var(--primary);
+}
+.picker-empty {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-secondary);
+}
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -426,6 +491,20 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
 
 <div id="toast" class="toast"></div>
 
+<!-- Picker Sheet (사원/매장 선택) -->
+<div id="picker-overlay" class="picker-overlay" onclick="if(event.target===this)closePicker()">
+  <div class="picker-sheet" onclick="event.stopPropagation()">
+    <div class="picker-header">
+      <span id="picker-title">선택</span>
+      <button type="button" class="close-btn" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-search">
+      <input type="text" id="picker-search" placeholder="검색..." oninput="filterPickerList()">
+    </div>
+    <div class="picker-list" id="picker-list"></div>
+  </div>
+</div>
+
 <!-- MAIN SCREEN -->
 <div id="screen-main" class="screen active">
   <div class="container">
@@ -478,18 +557,18 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
         <input type="date" id="rec-date" class="form-control">
       </div>
       <div class="form-group">
-        <label>사원명 <span style="font-weight:400;color:var(--text-secondary);font-size:0.85rem;">(직접 입력 가능)</span></label>
+        <label>사원명</label>
         <div style="display:flex;gap:8px;">
-          <input type="text" id="rec-employee" class="form-control" list="employee-datalist" placeholder="사원명 입력 또는 선택" autocomplete="off">
-          <datalist id="employee-datalist"></datalist>
+          <button type="button" id="rec-employee-btn" class="form-control" style="text-align:left;background:#fff;cursor:pointer;" onclick="openPicker('employee')">사원 선택 ▾</button>
+          <input type="hidden" id="rec-employee" value="">
           <button class="btn btn-outline btn-sm" onclick="promptAddEmployee()" style="width:auto;padding:0 14px;">+</button>
         </div>
       </div>
       <div class="form-group">
-        <label>방문 매장 <span style="font-weight:400;color:var(--text-secondary);font-size:0.85rem;">(사원 선택 시 담당 매장 우선 표시)</span></label>
+        <label>방문 매장 <span style="font-weight:400;color:var(--text-secondary);font-size:0.85rem;">(사원 담당 매장 우선)</span></label>
         <div style="display:flex;gap:8px;">
-          <input type="text" id="rec-store" class="form-control" list="store-list" placeholder="매장명 입력 또는 선택" autocomplete="off">
-          <datalist id="store-list"></datalist>
+          <button type="button" id="rec-store-btn" class="form-control" style="text-align:left;background:#fff;cursor:pointer;" onclick="openPicker('store')">매장 선택 ▾</button>
+          <input type="hidden" id="rec-store" value="">
           <button class="btn btn-outline btn-sm" onclick="promptAddStore()" style="width:auto;padding:0 14px;">+</button>
         </div>
       </div>
@@ -1042,6 +1121,8 @@ async function initNewRecord() {
   document.getElementById('memo-next').value = '';
   document.getElementById('memo-summary').value = '';
   document.getElementById('prev-compare-box').style.display = 'none';
+  setEmployeeDisplay('');
+  setStoreDisplay('');
 
   await loadEmployeeSelect();
   await loadStoreList();
@@ -1062,93 +1143,178 @@ async function initNewRecord() {
   } catch(e) {}
 }
 
-async function loadEmployeeSelect() {
-  const emps = await dbGetAll('employees');
-  const dl = document.getElementById('employee-datalist');
-  if (dl) dl.innerHTML = emps.map(e => `<option value="${e.name}">`).join('');
-  
-  const input = document.getElementById('rec-employee');
-  if (input && !input._bound) {
-    input._bound = true;
-    const onEmpChange = async () => {
-      const name = input.value.trim();
-      await filterStoresByEmployee(name);
-      if (!name) return;
-      const emps = await dbGetAll('employees');
-      const found = emps.find(e => e.name === name);
-      if (found) await showPrevCompare(found.id);
-    };
-    input.addEventListener('change', onEmpChange);
-    input.addEventListener('input', onEmpChange);
-    input.addEventListener('blur', async () => {
-      const name = input.value.trim();
-      if (!name) return;
-      const emps = await dbGetAll('employees');
-      if (!emps.some(e => e.name === name)) {
-        await dbAdd('employees', { name, createdAt: new Date().toISOString() });
-        await loadEmployeeSelect();
-      }
-      await filterStoresByEmployee(name);
-    });
+let pickerType = null; // 'employee' | 'store'
+let pickerItems = [];  // {label, value, assigned?}
+
+function setEmployeeDisplay(name) {
+  const hidden = document.getElementById('rec-employee');
+  const btn = document.getElementById('rec-employee-btn');
+  if (hidden) hidden.value = name || '';
+  if (btn) {
+    btn.textContent = name ? name + ' ▾' : '사원 선택 ▾';
+    btn.style.color = name ? 'var(--text)' : 'var(--text-secondary)';
   }
 }
 
-async function loadStoreList(empName) {
-  const stores = await dbGetAll('stores');
-  const dl = document.getElementById('store-list');
-  if (!dl) return;
-
-  let names = stores.map(s => s.name);
-  const emp = (empName || document.getElementById('rec-employee')?.value || '').trim();
-
-  if (emp && typeof EMP_STORES !== 'undefined' && EMP_STORES[emp]) {
-    // 해당 사원 담당 매장 우선 표시
-    const assigned = EMP_STORES[emp];
-    const assignedSet = new Set(assigned);
-    // 담당 매장 + 전체 매장(담당 아닌 것도 뒤에) — 사용자가 다른 매장도 입력 가능
-    const others = names.filter(n => !assignedSet.has(n));
-    names = [...assigned, ...others];
-    // placeholder hint
-    const storeInput = document.getElementById('rec-store');
-    if (storeInput) {
-      storeInput.placeholder = `${emp} 담당 매장 ${assigned.length}개 · 입력 또는 선택`;
-    }
-  } else {
-    const storeInput = document.getElementById('rec-store');
-    if (storeInput) storeInput.placeholder = '매장명 입력 또는 선택';
+function setStoreDisplay(name) {
+  const hidden = document.getElementById('rec-store');
+  const btn = document.getElementById('rec-store-btn');
+  if (hidden) hidden.value = name || '';
+  if (btn) {
+    btn.textContent = name ? name + ' ▾' : '매장 선택 ▾';
+    btn.style.color = name ? 'var(--text)' : 'var(--text-secondary)';
   }
+}
 
-  dl.innerHTML = names.map(n => `<option value="${n}">`).join('');
+async function loadEmployeeSelect() {
+  // no-op for datalist; picker loads on open
+  const name = document.getElementById('rec-employee')?.value || '';
+  setEmployeeDisplay(name);
+}
+
+async function loadStoreList() {
+  const name = document.getElementById('rec-store')?.value || '';
+  setStoreDisplay(name);
 }
 
 async function filterStoresByEmployee(empName) {
-  await loadStoreList(empName);
-  // 사원 바꾸면 매장 입력칸 비우기 (이전 사원 매장 남아있지 않게)
-  const storeInput = document.getElementById('rec-store');
-  if (storeInput && empName) {
+  const storeVal = document.getElementById('rec-store')?.value || '';
+  if (empName && storeVal) {
     const assigned = (typeof EMP_STORES !== 'undefined' && EMP_STORES[empName]) ? EMP_STORES[empName] : [];
-    // 현재 입력된 매장이 새 사원 담당이 아니면 비움
-    if (storeInput.value && assigned.length && !assigned.includes(storeInput.value)) {
-      storeInput.value = '';
+    if (assigned.length && !assigned.includes(storeVal)) {
+      setStoreDisplay('');
     }
   }
+}
+
+async function openPicker(type) {
+  pickerType = type;
+  const overlay = document.getElementById('picker-overlay');
+  const title = document.getElementById('picker-title');
+  const search = document.getElementById('picker-search');
+  search.value = '';
+
+  if (type === 'employee') {
+    title.textContent = '사원 선택';
+    const emps = await dbGetAll('employees');
+    pickerItems = emps.map(e => ({ label: e.name, value: e.name }));
+    // seed 순서로 정렬
+    const order = (typeof SEED_EMPLOYEES !== 'undefined') ? SEED_EMPLOYEES : [];
+    pickerItems.sort((a, b) => {
+      const ia = order.indexOf(a.value);
+      const ib = order.indexOf(b.value);
+      if (ia >= 0 && ib >= 0) return ia - ib;
+      if (ia >= 0) return -1;
+      if (ib >= 0) return 1;
+      return a.label.localeCompare(b.label, 'ko');
+    });
+  } else {
+    title.textContent = '매장 선택';
+    const emp = (document.getElementById('rec-employee')?.value || '').trim();
+    const stores = await dbGetAll('stores');
+    let names = stores.map(s => s.name);
+    const assigned = (emp && typeof EMP_STORES !== 'undefined' && EMP_STORES[emp]) ? EMP_STORES[emp] : [];
+    const assignedSet = new Set(assigned);
+    const assignedList = assigned.filter(n => names.includes(n) || true);
+    // ensure assigned in list
+    assigned.forEach(n => { if (!names.includes(n)) names.push(n); });
+    const others = names.filter(n => !assignedSet.has(n)).sort((a, b) => a.localeCompare(b, 'ko'));
+    const ordered = [...assigned, ...others];
+    pickerItems = ordered.map(n => ({
+      label: assignedSet.has(n) ? '★ ' + n : n,
+      value: n,
+      assigned: assignedSet.has(n)
+    }));
+    if (emp && assigned.length) {
+      title.textContent = emp + ' 담당 매장';
+    }
+  }
+
+  renderPickerList();
+  overlay.classList.add('show');
+  setTimeout(() => search.focus(), 200);
+}
+
+function renderPickerList() {
+  const q = (document.getElementById('picker-search')?.value || '').trim().toLowerCase();
+  const list = document.getElementById('picker-list');
+  const current = pickerType === 'employee'
+    ? (document.getElementById('rec-employee')?.value || '')
+    : (document.getElementById('rec-store')?.value || '');
+
+  let items = pickerItems;
+  if (q) {
+    items = items.filter(it => it.value.toLowerCase().includes(q) || it.label.toLowerCase().includes(q));
+  }
+
+  if (items.length === 0) {
+    list.innerHTML = '<div class="picker-empty">검색 결과가 없습니다</div>';
+    return;
+  }
+
+  list.innerHTML = items.map((it, idx) => {
+    const sel = it.value === current ? ' selected' : '';
+    const asg = it.assigned ? ' assigned' : '';
+    return `<div class="picker-item${sel}${asg}" data-idx="${idx}">${it.label}</div>`;
+  }).join('');
+  list.querySelectorAll('.picker-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = parseInt(el.getAttribute('data-idx'), 10);
+      const filtered = q
+        ? pickerItems.filter(it => it.value.toLowerCase().includes(q) || it.label.toLowerCase().includes(q))
+        : pickerItems;
+      if (filtered[idx]) selectPickerItem(filtered[idx].value);
+    });
+  });
+}
+
+function filterPickerList() {
+  renderPickerList();
+}
+
+async function selectPickerItem(value) {
+  if (pickerType === 'employee') {
+    setEmployeeDisplay(value);
+    // auto register if needed
+    const emps = await dbGetAll('employees');
+    if (!emps.some(e => e.name === value)) {
+      await dbAdd('employees', { name: value, createdAt: new Date().toISOString() });
+    }
+    const found = (await dbGetAll('employees')).find(e => e.name === value);
+    if (found) await showPrevCompare(found.id);
+    await filterStoresByEmployee(value);
+  } else {
+    setStoreDisplay(value);
+    const stores = await dbGetAll('stores');
+    if (!stores.some(s => s.name === value)) {
+      await dbAdd('stores', { name: value, createdAt: new Date().toISOString() });
+    }
+  }
+  closePicker();
+}
+
+function closePicker() {
+  document.getElementById('picker-overlay')?.classList.remove('show');
+  pickerType = null;
 }
 
 function promptAddEmployee() {
   const name = prompt('사원명을 입력하세요');
   if (name && name.trim()) {
     addEmployeeByName(name.trim()).then(async () => {
-      await loadEmployeeSelect();
-      document.getElementById('rec-employee').value = name.trim();
+      setEmployeeDisplay(name.trim());
+      await filterStoresByEmployee(name.trim());
+      const emps = await dbGetAll('employees');
+      const found = emps.find(e => e.name === name.trim());
+      if (found) await showPrevCompare(found.id);
     });
   }
 }
 function promptAddStore() {
   const name = prompt('매장명을 입력하세요');
   if (name && name.trim()) {
-    addStoreByName(name.trim()).then(async () => {
-      await loadStoreList();
-      document.getElementById('rec-store').value = name.trim();
+    addStoreByName(name.trim()).then(() => {
+      setStoreDisplay(name.trim());
     });
   }
 }
@@ -1367,9 +1533,10 @@ function saveDraft() {
 
 function restoreDraft(d) {
   if (d.date) document.getElementById('rec-date').value = d.date;
-  if (d.employeeName) document.getElementById('rec-employee').value = d.employeeName;
-  else if (d.employeeId) document.getElementById('rec-employee').value = ''; // will need name
-  if (d.store) document.getElementById('rec-store').value = d.store;
+  if (d.employeeName) setEmployeeDisplay(d.employeeName);
+  else setEmployeeDisplay('');
+  if (d.store) setStoreDisplay(d.store);
+  else setStoreDisplay('');
   if (d.purpose) document.getElementById('rec-purpose').value = d.purpose;
   if (d.round) document.getElementById('rec-round').value = d.round;
   if (d.note) document.getElementById('rec-note').value = d.note;
@@ -1858,8 +2025,8 @@ async function editRecord(id) {
   // wait a bit for DOM
   setTimeout(() => {
     document.getElementById('rec-date').value = r.date || '';
-    document.getElementById('rec-employee').value = r.employeeName || '';
-    document.getElementById('rec-store').value = r.store || '';
+    setEmployeeDisplay(r.employeeName || '');
+    setStoreDisplay(r.store || '');
     document.getElementById('rec-purpose').value = r.purpose || '';
     document.getElementById('rec-round').value = r.round || '최초';
     document.getElementById('rec-note').value = r.note || '';

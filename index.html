@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>순회사원 동승 코칭 노트</title>
+<style>
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --success: #34a853;
+  --warning: #fbbc04;
+  --danger: #ea4335;
+  --info: #4285f4;
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --border: #dadce0;
+  --radius: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 16px;
+  padding-bottom: 80px;
+}
+.header {
+  background: linear-gradient(135deg, #1a73e8, #0d47a1);
+  color: white;
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+.header h1 { font-size: 1.25rem; font-weight: 700; }
+.header .sub { font-size: 0.8rem; opacity: 0.9; margin-top: 2px; }
+.container { max-width: 800px; margin: 0 auto; padding: 16px; }
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 48px;
+  width: 100%;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: white; }
+.btn-warning { background: var(--warning); color: #333; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-outline {
+  background: white;
+  border: 2px solid var(--border);
+  color: var(--text);
+}
+.btn-sm { padding: 8px 14px; font-size: 0.9rem; min-height: 40px; width: auto; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-group .btn { flex: 1; min-width: 100px; }
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.menu-item {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+}
+.menu-item:active { border-color: var(--primary); transform: scale(0.97); }
+.menu-item .icon { font-size: 2rem; margin-bottom: 8px; }
+.menu-item .label { font-weight: 600; font-size: 0.95rem; }
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+.form-control {
+  width: 100%;
+  padding: 14px 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  background: white;
+  transition: border-color 0.15s;
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+textarea.form-control { min-height: 90px; resize: vertical; }
+select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.section {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.section-header {
+  background: #f1f3f4;
+  padding: 14px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.section-header .badge {
+  background: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.section-body { padding: 12px; display: none; }
+.section.open .section-body { display: block; }
+.section.open .section-header { background: #e8f0fe; color: var(--primary); }
+.check-item {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+}
+.check-item .q { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
+.rating-btns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.rating-btn {
+  padding: 10px 4px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.1s;
+}
+.rating-btn.selected-우수 { background: #e6f4ea; border-color: var(--success); color: #137333; }
+.rating-btn.selected-양호 { background: #e8f0fe; border-color: var(--info); color: #1967d2; }
+.rating-btn.selected-개선필요 { background: #fce8e6; border-color: var(--danger); color: #c5221f; }
+.rating-btn.selected-해당없음 { background: #f1f3f4; border-color: #9aa0a6; color: #5f6368; }
+.memo-area {
+  margin-top: 10px;
+  display: none;
+}
+.memo-area.show { display: block; }
+.memo-area textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.photo-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eee;
+}
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-item .del {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+}
+.progress-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.badge-우수 { background: #e6f4ea; color: #137333; }
+.badge-양호 { background: #e8f0fe; color: #1967d2; }
+.badge-개선필요 { background: #fce8e6; color: #c5221f; }
+.badge-해당없음 { background: #f1f3f4; color: #5f6368; }
+.badge-개선완료 { background: #e6f4ea; color: #137333; }
+.badge-개선진행중 { background: #fef7e0; color: #b06000; }
+.badge-개선미흡 { background: #fce8e6; color: #c5221f; }
+.badge-우수유지 { background: #e8f0fe; color: #1967d2; }
+.list-item {
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.list-item:last-child { border-bottom: none; }
+.list-item:active { background: #f8f9fa; }
+.list-item .meta { font-size: 0.85rem; color: var(--text-secondary); }
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #323232;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  max-width: 90%;
+  text-align: center;
+}
+.toast.show { opacity: 1; }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.modal-header h3 { font-size: 1.15rem; }
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px 8px;
+}
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  z-index: 90;
+}
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+.nav-item.active { color: var(--primary); font-weight: 700; }
+.nav-item .nav-icon { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+.screen { display: none; }
+.screen.active { display: block; }
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 12px 0;
+}
+.compare-table th, .compare-table td {
+  border: 1px solid var(--border);
+  padding: 8px 6px;
+  text-align: center;
+}
+.compare-table th { background: #f1f3f4; font-weight: 600; }
+.summary-box {
+  background: #f8f9fa;
+  border-left: 4px solid var(--primary);
+  padding: 12px 16px;
+  margin: 12px 0;
+  border-radius: 0 8px 8px 0;
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.chart-container {
+  background: white;
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 12px 0;
+}
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-label { width: 80px; font-size: 0.85rem; flex-shrink: 0; }
+.bar-track { flex: 1; height: 20px; background: #e8eaed; border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.stat-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+.stat-card .num { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+.stat-card .lbl { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+.empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.search-bar input { flex: 1; }
+.tag {
+  display: inline-block;
+  background: #e8f0fe;
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin: 2px;
+}
+.highlight-repeat {
+  border: 2px solid var(--danger) !important;
+  background: #fff5f5 !important;
+}
+@media (min-width: 600px) {
+  .menu-grid { grid-template-columns: repeat(3, 1fr); }
+  .rating-btns { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📋 순회사원 동승 코칭 노트</h1>
+  <div class="sub">현장 역량관리 · 코칭 · 성장추적</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- MAIN SCREEN -->
+<div id="screen-main" class="screen active">
+  <div class="container">
+    <div class="menu-grid">
+      <div class="menu-item" onclick="showScreen('new')">
+        <div class="icon">✏️</div>
+        <div class="label">신규 동승 기록</div>
+      </div>
+      <div class="menu-item" onclick="showScreen('employee')">
+        <div class="icon">👤</div>
+        <div class="label">사원별 역량관리</div>
+      </div>
+      <div class="menu-item" onclick="showScreen('records')">
+        <div class="icon">📂</div>
+        <div class="label">동승 기록 조회</div>
+      </div>
+      <div class="menu-item" onclick="showScreen('improvements')">
+        <div class="icon">📈</div>
+        <div class="label">개선사항 관리</div>
+      </div>
+      <div class="menu-item" onclick="showScreen('backup')">
+        <div class="icon">💾</div>
+        <div class="label">백업 및 복원</div>
+      </div>
+      <div class="menu-item" onclick="showScreen('settings')">
+        <div class="icon">⚙️</div>
+        <div class="label">사원·매장 관리</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📌 최근 동승 기록</div>
+      <div id="recent-records"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚠️ 개선 필요 사원 현황</div>
+      <div id="need-improve-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW RECORD SCREEN -->
+<div id="screen-new" class="screen">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">📝 동승 기본정보</div>
+      <div class="form-group">
+        <label>동승 날짜</label>
+        <input type="date" id="rec-date" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>사원명 <span style="font-weight:400;color:var(--text-secondary);font-size:0.85rem;">(직접 입력 가능)</span></label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="rec-employee" class="form-control" list="employee-datalist" placeholder="사원명 입력 또는 선택" autocomplete="off">
+          <datalist id="employee-datalist"></datalist>
+          <button class="btn btn-outline btn-sm" onclick="promptAddEmployee()" style="width:auto;padding:0 14px;">+</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>방문 매장 <span style="font-weight:400;color:var(--text-secondary);font-size:0.85rem;">(사원 선택 시 담당 매장 우선 표시)</span></label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="rec-store" class="form-control" list="store-list" placeholder="매장명 입력 또는 선택" autocomplete="off">
+          <datalist id="store-list"></datalist>
+          <button class="btn btn-outline btn-sm" onclick="promptAddStore()" style="width:auto;padding:0 14px;">+</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>동승 목적</label>
+        <input type="text" id="rec-purpose" class="form-control" placeholder="예: 정기 점검, 신규 사원 교육 등">
+      </div>
+      <div class="form-group">
+        <label>동승 차수</label>
+        <select id="rec-round" class="form-control">
+          <option value="최초">최초</option>
+          <option value="2차">2차</option>
+          <option value="정기점검">정기점검</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>기타 특이사항</label>
+        <textarea id="rec-note" class="form-control" placeholder="특이사항 입력"></textarea>
+      </div>
+    </div>
+
+    <div id="prev-compare-box" style="display:none;" class="card">
+      <div class="card-title">🔄 이전 평가 비교</div>
+      <div id="prev-compare-content"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✅ 업무별 체크리스트 <span id="check-progress-text" style="font-weight:400;font-size:0.9rem;color:var(--text-secondary)"></span></div>
+      <div class="progress-bar"><div class="progress-fill" id="check-progress" style="width:0%"></div></div>
+      <div id="checklist-container"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 현장 즉시 메모</div>
+      <div class="form-group">
+        <label>오늘 잘한 점</label>
+        <textarea id="memo-good" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <label>개선이 필요한 부분</label>
+        <textarea id="memo-improve" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <label>현장에서 직접 교육한 내용</label>
+        <textarea id="memo-coach" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <label>사원이 어려워하는 업무</label>
+        <textarea id="memo-hard" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <label>사원이 요청한 지원사항</label>
+        <textarea id="memo-request" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <label>다음 동승 시 다시 확인할 사항</label>
+        <textarea id="memo-next" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <label>매니저 종합 의견</label>
+        <textarea id="memo-summary" class="form-control"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📷 사진 첨부</div>
+      <div class="btn-group" style="margin-bottom:12px;">
+        <button class="btn btn-outline" onclick="document.getElementById('photo-input').click()">📸 사진 추가</button>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" multiple capture="environment" style="display:none" onchange="handlePhotos(event)">
+      <div class="photo-grid" id="photo-preview"></div>
+    </div>
+
+    <div class="btn-group" style="margin:20px 0;">
+      <button class="btn btn-outline" onclick="saveDraft()">임시저장</button>
+      <button class="btn btn-primary" onclick="previewAndSave()">저장 및 요약</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT / SUMMARY SCREEN -->
+<div id="screen-result" class="screen">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">📊 동승 결과 요약</div>
+      <div id="result-summary"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📄 활동일보 초안</div>
+      <div class="summary-box" id="activity-log"></div>
+      <button class="btn btn-outline" onclick="copyText('activity-log')" style="margin-top:10px;">📋 활동일보 복사</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📝 코칭 보고서</div>
+      <div class="summary-box" id="coaching-report"></div>
+      <button class="btn btn-outline" onclick="copyText('coaching-report')" style="margin-top:10px;">📋 코칭 보고서 복사</button>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="printResult()">🖨️ 인쇄 / PDF</button>
+      <button class="btn btn-success" onclick="finishRecord()">완료 후 메인으로</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE MANAGEMENT -->
+<div id="screen-employee" class="screen">
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="emp-search" class="form-control" placeholder="사원명 검색" oninput="renderEmployeeList()">
+    </div>
+    <div class="card">
+      <div id="employee-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE DETAIL -->
+<div id="screen-emp-detail" class="screen">
+  <div class="container">
+    <div id="emp-detail-content"></div>
+  </div>
+</div>
+
+<!-- RECORDS LIST -->
+<div id="screen-records" class="screen">
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="rec-search" class="form-control" placeholder="사원/매장/날짜 검색" oninput="renderRecordsList()">
+      <select id="rec-filter-round" class="form-control" style="width:auto;min-width:100px;" onchange="renderRecordsList()">
+        <option value="">전체 차수</option>
+        <option value="최초">최초</option>
+        <option value="2차">2차</option>
+        <option value="정기점검">정기점검</option>
+      </select>
+    </div>
+    <div class="card">
+      <div id="records-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPROVEMENTS -->
+<div id="screen-improvements" class="screen">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">📈 개선사항 및 후속 코칭</div>
+      <div id="improvements-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP -->
+<div id="screen-backup" class="screen">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">💾 데이터 백업 및 복원</div>
+      <p style="margin-bottom:16px;color:var(--text-secondary);font-size:0.9rem;">
+        데이터가 브라우저에 저장됩니다. (IndexedDB 또는 localStorage 자동 전환)<br>
+        정기적으로 JSON 백업을 권장합니다.
+      </p>
+      <button class="btn btn-primary" onclick="exportJSON()" style="margin-bottom:10px;">📥 JSON 전체 백업 다운로드</button>
+      <button class="btn btn-outline" onclick="document.getElementById('import-json').click()" style="margin-bottom:10px;">📤 JSON 백업 복원</button>
+      <input type="file" id="import-json" accept=".json" style="display:none" onchange="importJSON(event)">
+      <button class="btn btn-success" onclick="copyForSheets()" style="margin-bottom:10px;">📋 구글시트/엑셀용 복사</button>
+      <button class="btn btn-outline" onclick="exportExcel()" style="margin-bottom:10px;">📊 CSV 파일 다운로드</button>
+      <button class="btn btn-outline" onclick="showExportPreview()" style="margin-bottom:10px;">👀 내보내기 미리보기</button>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
+        아이폰에서는 <b>「구글시트/엑셀용 복사」</b> → 스프레드시트 앱에서 붙여넣기가 가장 확실합니다.
+      </p>
+      <hr style="margin:16px 0;border:none;border-top:1px solid var(--border);">
+      <button class="btn btn-danger" onclick="confirmClearAll()">⚠️ 전체 데이터 삭제</button>
+    </div>
+    <div id="export-preview-box" class="card" style="display:none;">
+      <div class="card-title">내보내기 미리보기</div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;">아래 내용을 길게 눌러 전체 선택 후 복사할 수도 있습니다.</p>
+      <textarea id="export-preview-text" class="form-control" style="min-height:200px;font-size:0.8rem;" readonly></textarea>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="copyText('export-preview-text')">📋 이 내용 복사</button>
+      <button class="btn btn-outline" style="margin-top:8px;" onclick="document.getElementById('export-preview-box').style.display='none'">닫기</button>
+    </div>
+    <div class="card">
+      <div class="card-title">ℹ️ 저장 안내</div>
+      <ul style="padding-left:20px;font-size:0.9rem;color:var(--text-secondary);">
+        <li>모든 기록과 사진은 브라우저에 저장됩니다. (iOS 로컬 파일은 localStorage 사용)</li>
+        <li>브라우저 캐시/데이터 삭제 시 데이터가 사라질 수 있으니 정기 백업을 권장합니다.</li>
+        <li>사진이 많으면 저장 공간 제한에 걸릴 수 있습니다. 필요 시 사진을 줄이거나 백업하세요.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS (Employees & Stores) -->
+<div id="screen-settings" class="screen">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">📥 엑셀/CSV로 일괄 가져오기</div>
+      <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;">
+        사원명 또는 매장명이 한 줄에 하나씩 있는 CSV/텍스트 파일을 선택하세요.<br>
+        (첫 줄이 '사원명', '이름', '매장명' 등이면 자동으로 인식합니다)
+      </p>
+      <div class="btn-group" style="margin-bottom:8px;">
+        <button class="btn btn-primary" onclick="document.getElementById('import-emp-csv').click()">👤 사원 목록 가져오기</button>
+        <button class="btn btn-outline" onclick="document.getElementById('import-store-csv').click()">🏪 매장 목록 가져오기</button>
+      </div>
+      <input type="file" id="import-emp-csv" accept=".csv,.txt,.xlsx" style="display:none" onchange="importEmployeeCSV(event)">
+      <input type="file" id="import-store-csv" accept=".csv,.txt,.xlsx" style="display:none" onchange="importStoreCSV(event)">
+    </div>
+    <div class="card">
+      <div class="card-title">👤 사원 관리</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="new-emp-name" class="form-control" placeholder="사원명 입력">
+        <button class="btn btn-primary btn-sm" onclick="addEmployee()" style="width:auto;">추가</button>
+      </div>
+      <div id="settings-emp-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏪 매장 관리</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="new-store-name" class="form-control" placeholder="매장명 입력">
+        <button class="btn btn-primary btn-sm" onclick="addStore()" style="width:auto;">추가</button>
+      </div>
+      <div id="settings-store-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-item active" onclick="showScreen('main')" data-screen="main">
+    <span class="nav-icon">🏠</span>홈
+  </button>
+  <button class="nav-item" onclick="showScreen('new')" data-screen="new">
+    <span class="nav-icon">✏️</span>신규
+  </button>
+  <button class="nav-item" onclick="showScreen('employee')" data-screen="employee">
+    <span class="nav-icon">👤</span>사원
+  </button>
+  <button class="nav-item" onclick="showScreen('records')" data-screen="records">
+    <span class="nav-icon">📂</span>기록
+  </button>
+  <button class="nav-item" onclick="showScreen('improvements')" data-screen="improvements">
+    <span class="nav-icon">📈</span>개선
+  </button>
+</div>
+
+<script>
+// ==================== DATA & DB ====================
+const DB_NAME = 'DongseungCoachingDB';
+const DB_VERSION = 1;
+const LS_PREFIX = 'dscn_';
+let db = null;
+// storageMode: 'idb' | 'ls' | 'mem'
+let storageMode = 'mem';
+let currentRecord = null;
+let currentPhotos = [];
+let editingRecordId = null;
+let idCounters = {};
+// in-memory fallback (sandbox / restricted preview)
+const memStore = {
+  employees: [], stores: [], records: [], photos: [], improvements: [], meta: []
+};
+
+const CHECKLIST = {
+  A: {
+    title: 'A. 매장 방문 및 기본 업무',
+    items: [
+      '매장 방문 시 담당자와 원활하게 소통하는가?',
+      '매장별 담당 업무와 방문 목적을 숙지하고 있는가?',
+      '매장 방문 후 필요한 업무를 빠짐없이 수행하는가?',
+      '매장 담당자 및 대리점과 적절하게 소통하는가?',
+      '매장별 특이사항 및 요청사항을 파악하는가?'
+    ]
+  },
+  B: {
+    title: 'B. 매대 진열 및 관리',
+    items: [
+      '본매대 제품 진열 상태를 확인하는가?',
+      '선입선출을 정확하게 수행하는가?',
+      '유통기한 및 재고 상태를 확인하는가?',
+      '가격표 및 할인 가격 고지를 확인하는가?',
+      'POP 부착 및 관리가 적절한가?',
+      '행사매대 및 연관진열 활동을 수행하는가?',
+      '진열 변경사항을 정확하게 조사하고 등록하는가?',
+      '결품 및 미진열 제품을 확인하고 조치하는가?'
+    ]
+  },
+  C: {
+    title: 'C. 영업 및 판매 활성화',
+    items: [
+      '신규 제품 입점 활동을 수행하는가?',
+      '연관진열 기회를 적극적으로 발굴하는가?',
+      '매장 담당자에게 추가 진열을 제안하는가?',
+      '제품 및 행사에 대한 이해도가 충분한가?',
+      '판매 증대를 위한 적극적인 활동을 하는가?',
+      '고객에게 제품의 특징과 장점을 정확하게 전달하는가?',
+      '행사 판매 시 적절한 시식 및 판매 멘트를 활용하는가?'
+    ]
+  },
+  D: {
+    title: 'D. 모바일 업무 및 전산 등록',
+    items: [
+      '모바일 업무 시스템을 능숙하게 사용하는가?',
+      '매장 방문 시 활동일보를 작성하는가?',
+      '진열조사를 정확하게 등록하는가?',
+      '유통기한 조사 및 변경사항을 등록하는가?',
+      '행사매대 현황 및 사진을 등록하는가?',
+      '업무 등록 누락 없이 마무리하는가?',
+      '사진 및 현장 자료를 정확하게 등록하는가?'
+    ]
+  },
+  E: {
+    title: 'E. 업무 태도 및 자기관리',
+    items: [
+      '시간 약속 및 근무 일정을 준수하는가?',
+      '업무를 책임감 있게 수행하는가?',
+      '매장 내 기본적인 근무 예절을 지키는가?',
+      '문제 발생 시 매니저에게 신속하게 공유하는가?',
+      '새로운 업무를 배우려는 의지가 있는가?',
+      '교육받은 내용을 실제 업무에 적용하는가?'
+    ]
+  }
+};
+
+const RATINGS = ['우수', '양호', '개선필요', '해당없음'];
+
+// ---------- Storage helpers (mem / localStorage / IndexedDB) ----------
+function canUseLocalStorage() {
+  try {
+    const k = '__dscn_test__';
+    localStorage.setItem(k, '1');
+    localStorage.removeItem(k);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function lsKey(store) { return LS_PREFIX + store; }
+
+function lsLoad(store) {
+  try {
+    const raw = localStorage.getItem(lsKey(store));
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+
+function lsSave(store, arr) {
+  try {
+    localStorage.setItem(lsKey(store), JSON.stringify(arr));
+  } catch (e) {
+    if (e && e.name === 'QuotaExceededError') {
+      toast('저장 공간 부족. 사진 수를 줄이거나 백업 후 오래된 기록을 삭제해주세요.');
+    }
+    // fall through to memory
+    memStore[store] = arr;
+    storageMode = 'mem';
+  }
+}
+
+function nextId(store) {
+  if (!idCounters[store]) {
+    let arr = [];
+    if (storageMode === 'ls') arr = lsLoad(store);
+    else if (storageMode === 'mem') arr = memStore[store] || [];
+    idCounters[store] = arr.reduce((m, x) => Math.max(m, x.id || 0), 0);
+  }
+  idCounters[store]++;
+  return idCounters[store];
+}
+
+function openDB() {
+  // IndexedDB는 iOS/샌드박스에서 SecurityError를 내므로 사용하지 않음
+  return new Promise((resolve) => {
+    try {
+      if (canUseLocalStorage()) {
+        storageMode = 'ls';
+      } else {
+        storageMode = 'mem';
+      }
+    } catch (_) {
+      storageMode = 'mem';
+    }
+    db = null;
+    resolve(null);
+  });
+}
+
+function dbGetAll(storeName) {
+  if (storageMode === 'ls') {
+    return Promise.resolve(lsLoad(storeName));
+  }
+  return Promise.resolve([...(memStore[storeName] || [])]);
+}
+
+function dbGet(storeName, id) {
+  const arr = storageMode === 'ls' ? lsLoad(storeName) : (memStore[storeName] || []);
+  return Promise.resolve(arr.find(x => x.id === id || String(x.id) === String(id)) || null);
+}
+
+function dbAdd(storeName, data) {
+  const id = nextId(storeName);
+  const item = Object.assign({}, data, { id: id });
+  if (storageMode === 'ls') {
+    const arr = lsLoad(storeName);
+    arr.push(item);
+    lsSave(storeName, arr);
+  } else {
+    if (!memStore[storeName]) memStore[storeName] = [];
+    memStore[storeName].push(item);
+  }
+  return Promise.resolve(id);
+}
+
+function dbPut(storeName, data) {
+  if (storageMode === 'ls') {
+    const arr = lsLoad(storeName);
+    const idx = arr.findIndex(x => x.id === data.id || String(x.id) === String(data.id));
+    if (idx >= 0) arr[idx] = data; else arr.push(data);
+    lsSave(storeName, arr);
+  } else {
+    const arr = memStore[storeName] || [];
+    const idx = arr.findIndex(x => x.id === data.id || String(x.id) === String(data.id));
+    if (idx >= 0) arr[idx] = data; else arr.push(data);
+    memStore[storeName] = arr;
+  }
+  return Promise.resolve(data.id);
+}
+
+function dbDelete(storeName, id) {
+  if (storageMode === 'ls') {
+    lsSave(storeName, lsLoad(storeName).filter(x => x.id !== id && String(x.id) !== String(id)));
+  } else {
+    memStore[storeName] = (memStore[storeName] || []).filter(x => x.id !== id && String(x.id) !== String(id));
+  }
+  return Promise.resolve();
+}
+
+function dbClear(storeName) {
+  if (storageMode === 'ls') {
+    try { localStorage.removeItem(lsKey(storeName)); } catch (e) {}
+  } else {
+    memStore[storeName] = [];
+  }
+  idCounters[storeName] = 0;
+  return Promise.resolve();
+}
+
+// ==================== UI HELPERS ====================
+function toast(msg, duration = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const screen = document.getElementById('screen-' + name);
+  if (screen) screen.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.screen === name || (name === 'emp-detail' && n.dataset.screen === 'employee') || (name === 'result' && n.dataset.screen === 'new'));
+  });
+  window.scrollTo(0, 0);
+  if (name === 'main') renderMain();
+  if (name === 'employee') renderEmployeeList();
+  if (name === 'records') renderRecordsList();
+  if (name === 'improvements') renderImprovements();
+  if (name === 'settings') renderSettings();
+  if (name === 'new') initNewRecord();
+}
+
+// ==================== MAIN ====================
+async function renderMain() {
+  const records = await dbGetAll('records');
+  records.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const recent = records.slice(0, 5);
+  const empMap = {};
+  (await dbGetAll('employees')).forEach(e => empMap[e.id] = e.name);
+
+  const recentEl = document.getElementById('recent-records');
+  if (recent.length === 0) {
+    recentEl.innerHTML = '<div class="empty-state"><div class="icon">📭</div>아직 동승 기록이 없습니다.</div>';
+  } else {
+    recentEl.innerHTML = recent.map(r => `
+      <div class="list-item" onclick="viewRecord(${r.id})">
+        <div>
+          <div style="font-weight:600">${empMap[r.employeeId] || r.employeeName || '미지정'} · ${r.store || ''}</div>
+          <div class="meta">${r.date} · ${r.round || ''} · ${countImprove(r)}개 개선필요</div>
+        </div>
+        <span>›</span>
+      </div>
+    `).join('');
+  }
+
+  // Need improve
+  const needMap = {};
+  records.forEach(r => {
+    const name = empMap[r.employeeId] || r.employeeName || '미지정';
+    if (!needMap[name]) needMap[name] = { count: 0, last: r.date, items: [] };
+    const improves = getImproveItems(r);
+    if (improves.length > 0) {
+      needMap[name].count += improves.length;
+      needMap[name].items.push(...improves);
+      if (r.date > needMap[name].last) needMap[name].last = r.date;
+    }
+  });
+  const needList = Object.entries(needMap).filter(([_, v]) => v.count > 0).sort((a, b) => b[1].count - a[1].count);
+  const needEl = document.getElementById('need-improve-list');
+  if (needList.length === 0) {
+    needEl.innerHTML = '<div style="color:var(--text-secondary);padding:12px;">현재 개선 필요 항목이 있는 사원이 없습니다.</div>';
+  } else {
+    needEl.innerHTML = needList.slice(0, 6).map(([name, v]) => `
+      <div class="list-item">
+        <div>
+          <div style="font-weight:600">${name}</div>
+          <div class="meta">개선필요 ${v.count}건 · 최근 ${v.last}</div>
+        </div>
+        <span class="badge badge-개선필요">${v.count}</span>
+      </div>
+    `).join('');
+  }
+}
+
+function countImprove(r) {
+  return getImproveItems(r).length;
+}
+function getImproveItems(r) {
+  if (!r.checks) return [];
+  const items = [];
+  Object.keys(r.checks).forEach(key => {
+    if (r.checks[key].rating === '개선필요') items.push(key);
+  });
+  return items;
+}
+
+// ==================== NEW RECORD ====================
+async function initNewRecord() {
+  editingRecordId = null;
+  currentPhotos = [];
+  document.getElementById('photo-preview').innerHTML = '';
+  document.getElementById('rec-date').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('rec-purpose').value = '';
+  document.getElementById('rec-note').value = '';
+  document.getElementById('rec-round').value = '최초';
+  document.getElementById('memo-good').value = '';
+  document.getElementById('memo-improve').value = '';
+  document.getElementById('memo-coach').value = '';
+  document.getElementById('memo-hard').value = '';
+  document.getElementById('memo-request').value = '';
+  document.getElementById('memo-next').value = '';
+  document.getElementById('memo-summary').value = '';
+  document.getElementById('prev-compare-box').style.display = 'none';
+
+  await loadEmployeeSelect();
+  await loadStoreList();
+  buildChecklist();
+  updateProgress();
+
+  // Load draft if exists
+  try {
+    const draft = localStorage.getItem('dongseung_draft');
+    if (draft) {
+      const d = JSON.parse(draft);
+      if (confirm('임시저장된 내용이 있습니다. 불러올까요?')) {
+        restoreDraft(d);
+      } else {
+        try { localStorage.removeItem('dongseung_draft'); } catch(_) {}
+      }
+    }
+  } catch(e) {}
+}
+
+async function loadEmployeeSelect() {
+  const emps = await dbGetAll('employees');
+  const dl = document.getElementById('employee-datalist');
+  if (dl) dl.innerHTML = emps.map(e => `<option value="${e.name}">`).join('');
+  
+  const input = document.getElementById('rec-employee');
+  if (input && !input._bound) {
+    input._bound = true;
+    const onEmpChange = async () => {
+      const name = input.value.trim();
+      await filterStoresByEmployee(name);
+      if (!name) return;
+      const emps = await dbGetAll('employees');
+      const found = emps.find(e => e.name === name);
+      if (found) await showPrevCompare(found.id);
+    };
+    input.addEventListener('change', onEmpChange);
+    input.addEventListener('input', onEmpChange);
+    input.addEventListener('blur', async () => {
+      const name = input.value.trim();
+      if (!name) return;
+      const emps = await dbGetAll('employees');
+      if (!emps.some(e => e.name === name)) {
+        await dbAdd('employees', { name, createdAt: new Date().toISOString() });
+        await loadEmployeeSelect();
+      }
+      await filterStoresByEmployee(name);
+    });
+  }
+}
+
+async function loadStoreList(empName) {
+  const stores = await dbGetAll('stores');
+  const dl = document.getElementById('store-list');
+  if (!dl) return;
+
+  let names = stores.map(s => s.name);
+  const emp = (empName || document.getElementById('rec-employee')?.value || '').trim();
+
+  if (emp && typeof EMP_STORES !== 'undefined' && EMP_STORES[emp]) {
+    // 해당 사원 담당 매장 우선 표시
+    const assigned = EMP_STORES[emp];
+    const assignedSet = new Set(assigned);
+    // 담당 매장 + 전체 매장(담당 아닌 것도 뒤에) — 사용자가 다른 매장도 입력 가능
+    const others = names.filter(n => !assignedSet.has(n));
+    names = [...assigned, ...others];
+    // placeholder hint
+    const storeInput = document.getElementById('rec-store');
+    if (storeInput) {
+      storeInput.placeholder = `${emp} 담당 매장 ${assigned.length}개 · 입력 또는 선택`;
+    }
+  } else {
+    const storeInput = document.getElementById('rec-store');
+    if (storeInput) storeInput.placeholder = '매장명 입력 또는 선택';
+  }
+
+  dl.innerHTML = names.map(n => `<option value="${n}">`).join('');
+}
+
+async function filterStoresByEmployee(empName) {
+  await loadStoreList(empName);
+  // 사원 바꾸면 매장 입력칸 비우기 (이전 사원 매장 남아있지 않게)
+  const storeInput = document.getElementById('rec-store');
+  if (storeInput && empName) {
+    const assigned = (typeof EMP_STORES !== 'undefined' && EMP_STORES[empName]) ? EMP_STORES[empName] : [];
+    // 현재 입력된 매장이 새 사원 담당이 아니면 비움
+    if (storeInput.value && assigned.length && !assigned.includes(storeInput.value)) {
+      storeInput.value = '';
+    }
+  }
+}
+
+function promptAddEmployee() {
+  const name = prompt('사원명을 입력하세요');
+  if (name && name.trim()) {
+    addEmployeeByName(name.trim()).then(async () => {
+      await loadEmployeeSelect();
+      document.getElementById('rec-employee').value = name.trim();
+    });
+  }
+}
+function promptAddStore() {
+  const name = prompt('매장명을 입력하세요');
+  if (name && name.trim()) {
+    addStoreByName(name.trim()).then(async () => {
+      await loadStoreList();
+      document.getElementById('rec-store').value = name.trim();
+    });
+  }
+}
+
+async function addEmployeeByName(name) {
+  const emps = await dbGetAll('employees');
+  if (emps.some(e => e.name === name)) { 
+    toast('이미 등록된 사원입니다'); 
+    return emps.find(e => e.name === name);
+  }
+  const id = await dbAdd('employees', { name, createdAt: new Date().toISOString() });
+  toast('사원이 등록되었습니다');
+  return { id, name };
+}
+async function addStoreByName(name) {
+  const stores = await dbGetAll('stores');
+  if (stores.some(s => s.name === name)) { 
+    toast('이미 등록된 매장입니다'); 
+    return;
+  }
+  await dbAdd('stores', { name, createdAt: new Date().toISOString() });
+  toast('매장이 등록되었습니다');
+}
+
+function buildChecklist() {
+  const container = document.getElementById('checklist-container');
+  let html = '';
+  Object.keys(CHECKLIST).forEach(sec => {
+    const s = CHECKLIST[sec];
+    html += `<div class="section" id="sec-${sec}">
+      <div class="section-header" onclick="toggleSection('${sec}')">
+        <span>${s.title}</span>
+        <span class="badge" id="badge-${sec}">0/${s.items.length}</span>
+      </div>
+      <div class="section-body">`;
+    s.items.forEach((q, i) => {
+      const key = `${sec}${i+1}`;
+      html += `<div class="check-item" id="item-${key}">
+        <div class="q">${i+1}. ${q}</div>
+        <div class="rating-btns">
+          ${RATINGS.map(r => `<button type="button" class="rating-btn" data-key="${key}" data-rating="${r}" onclick="setRating('${key}','${r}')">${r === '개선필요' ? '개선필요' : r}</button>`).join('')}
+        </div>
+        <div class="memo-area" id="memo-${key}">
+          <textarea placeholder="이 항목에 대한 메모 (선택)" id="memotext-${key}" oninput="updateCheckMemo('${key}')"></textarea>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  // open first section
+  document.getElementById('sec-A')?.classList.add('open');
+}
+
+function toggleSection(sec) {
+  document.getElementById('sec-' + sec).classList.toggle('open');
+}
+
+const checkData = {}; // key -> {rating, memo}
+
+function setRating(key, rating) {
+  if (!checkData[key]) checkData[key] = { rating: null, memo: '' };
+  checkData[key].rating = rating;
+  // UI
+  document.querySelectorAll(`.rating-btn[data-key="${key}"]`).forEach(btn => {
+    btn.className = 'rating-btn';
+    if (btn.dataset.rating === rating) {
+      btn.classList.add('selected-' + rating);
+    }
+  });
+  // show memo
+  const memoEl = document.getElementById('memo-' + key);
+  if (rating && rating !== '해당없음') memoEl.classList.add('show');
+  else memoEl.classList.remove('show');
+  updateProgress();
+  updateSectionBadge(key[0]);
+}
+
+function updateCheckMemo(key) {
+  if (!checkData[key]) checkData[key] = { rating: null, memo: '' };
+  checkData[key].memo = document.getElementById('memotext-' + key).value;
+}
+
+function updateProgress() {
+  let total = 0, done = 0;
+  Object.keys(CHECKLIST).forEach(sec => {
+    CHECKLIST[sec].items.forEach((_, i) => {
+      total++;
+      const key = `${sec}${i+1}`;
+      if (checkData[key] && checkData[key].rating) done++;
+    });
+  });
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('check-progress').style.width = pct + '%';
+  document.getElementById('check-progress-text').textContent = `(${done}/${total})`;
+}
+
+function updateSectionBadge(sec) {
+  let done = 0;
+  const items = CHECKLIST[sec].items;
+  items.forEach((_, i) => {
+    const key = `${sec}${i+1}`;
+    if (checkData[key] && checkData[key].rating) done++;
+  });
+  const badge = document.getElementById('badge-' + sec);
+  if (badge) badge.textContent = `${done}/${items.length}`;
+}
+
+async function showPrevCompare(empId) {
+  const records = await dbGetAll('records');
+  const prev = records.filter(r => r.employeeId != null && String(r.employeeId) === String(empId)).sort((a, b) => (b.date||'').localeCompare(a.date||'') || (b.id||0) - (a.id||0))[0];
+  const box = document.getElementById('prev-compare-box');
+  if (!prev || !prev.checks) {
+    box.style.display = 'none';
+    return;
+  }
+  box.style.display = 'block';
+  let html = `<p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:10px;">이전 동승: ${prev.date} (${prev.round || ''})</p>`;
+  html += `<table class="compare-table"><thead><tr><th>항목</th><th>이전</th><th>이번</th></tr></thead><tbody>`;
+  Object.keys(prev.checks).forEach(key => {
+    const c = prev.checks[key];
+    if (c.rating === '개선필요' || c.rating === '우수' || c.rating === '양호') {
+      const q = getQuestionText(key);
+      html += `<tr><td style="text-align:left;font-size:0.85rem;">${q}</td><td><span class="badge badge-${c.rating}">${c.rating}</span></td><td id="prev-this-${key}">-</td></tr>`;
+    }
+  });
+  html += `</tbody></table>`;
+  document.getElementById('prev-compare-content').innerHTML = html;
+}
+
+function getQuestionText(key) {
+  const sec = key[0];
+  const idx = parseInt(key.slice(1)) - 1;
+  return CHECKLIST[sec]?.items[idx] || key;
+}
+
+// Photos
+function handlePhotos(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const id = Date.now() + Math.random().toString(36).slice(2);
+      currentPhotos.push({ id, dataUrl: ev.target.result, desc: '', name: file.name });
+      renderPhotoPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function renderPhotoPreview() {
+  const el = document.getElementById('photo-preview');
+  el.innerHTML = currentPhotos.map(p => `
+    <div class="photo-item">
+      <img src="${p.dataUrl}" alt="">
+      <button class="del" onclick="removePhoto('${p.id}')">×</button>
+    </div>
+  `).join('');
+}
+
+function removePhoto(id) {
+  currentPhotos = currentPhotos.filter(p => p.id !== id);
+  renderPhotoPreview();
+}
+
+// Save
+async function resolveEmployee(name) {
+  name = (name || '').trim();
+  if (!name) return { id: null, name: '' };
+  const emps = await dbGetAll('employees');
+  let found = emps.find(e => e.name === name);
+  if (!found) {
+    const id = await dbAdd('employees', { name, createdAt: new Date().toISOString() });
+    found = { id, name };
+  }
+  return found;
+}
+
+function collectRecordData() {
+  const empName = document.getElementById('rec-employee').value.trim();
+  return {
+    date: document.getElementById('rec-date').value,
+    employeeId: null, // will be resolved on save
+    employeeName: empName,
+    store: document.getElementById('rec-store').value.trim(),
+    purpose: document.getElementById('rec-purpose').value.trim(),
+    round: document.getElementById('rec-round').value,
+    note: document.getElementById('rec-note').value.trim(),
+    checks: JSON.parse(JSON.stringify(checkData)),
+    memos: {
+      good: document.getElementById('memo-good').value.trim(),
+      improve: document.getElementById('memo-improve').value.trim(),
+      coach: document.getElementById('memo-coach').value.trim(),
+      hard: document.getElementById('memo-hard').value.trim(),
+      request: document.getElementById('memo-request').value.trim(),
+      next: document.getElementById('memo-next').value.trim(),
+      summary: document.getElementById('memo-summary').value.trim()
+    },
+    photos: currentPhotos.map(p => ({ dataUrl: p.dataUrl, desc: p.desc, name: p.name })),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function saveDraft() {
+  const data = collectRecordData();
+  try {
+    localStorage.setItem('dongseung_draft', JSON.stringify(data));
+    toast('💾 임시저장 완료');
+  } catch (e) {
+    toast('임시저장 실패 (저장소 제한). 바로 저장을 권장합니다.');
+  }
+}
+
+function restoreDraft(d) {
+  if (d.date) document.getElementById('rec-date').value = d.date;
+  if (d.employeeName) document.getElementById('rec-employee').value = d.employeeName;
+  else if (d.employeeId) document.getElementById('rec-employee').value = ''; // will need name
+  if (d.store) document.getElementById('rec-store').value = d.store;
+  if (d.purpose) document.getElementById('rec-purpose').value = d.purpose;
+  if (d.round) document.getElementById('rec-round').value = d.round;
+  if (d.note) document.getElementById('rec-note').value = d.note;
+  if (d.memos) {
+    document.getElementById('memo-good').value = d.memos.good || '';
+    document.getElementById('memo-improve').value = d.memos.improve || '';
+    document.getElementById('memo-coach').value = d.memos.coach || '';
+    document.getElementById('memo-hard').value = d.memos.hard || '';
+    document.getElementById('memo-request').value = d.memos.request || '';
+    document.getElementById('memo-next').value = d.memos.next || '';
+    document.getElementById('memo-summary').value = d.memos.summary || '';
+  }
+  if (d.checks) {
+    Object.keys(d.checks).forEach(key => {
+      checkData[key] = d.checks[key];
+      if (d.checks[key].rating) setRating(key, d.checks[key].rating);
+      if (d.checks[key].memo) {
+        const el = document.getElementById('memotext-' + key);
+        if (el) el.value = d.checks[key].memo;
+      }
+    });
+  }
+  if (d.photos) {
+    currentPhotos = d.photos.map(p => ({ ...p, id: Date.now() + Math.random().toString(36).slice(2) }));
+    renderPhotoPreview();
+  }
+  updateProgress();
+  toast('임시저장 내용 불러옴');
+}
+
+async function previewAndSave() {
+  const data = collectRecordData();
+  if (!data.date) { toast('날짜를 입력해주세요'); return; }
+  if (!data.employeeName) { toast('사원명을 입력해주세요'); return; }
+  if (!data.store) { toast('매장명을 입력해주세요'); return; }
+
+  // Resolve / auto-register employee
+  const emp = await resolveEmployee(data.employeeName);
+  data.employeeId = emp.id;
+  data.employeeName = emp.name;
+
+  // Ensure store
+  if (data.store) {
+    const stores = await dbGetAll('stores');
+    if (!stores.some(s => s.name === data.store)) {
+      await addStoreByName(data.store);
+    }
+  }
+
+  // Generate summary
+  const summary = generateSummary(data);
+  const activityLog = generateActivityLog(data);
+  const coachingReport = generateCoachingReport(data);
+
+  document.getElementById('result-summary').innerHTML = summary;
+  document.getElementById('activity-log').textContent = activityLog;
+  document.getElementById('coaching-report').textContent = coachingReport;
+
+  // Save to DB
+  if (editingRecordId) {
+    data.id = editingRecordId;
+    data.updatedAt = new Date().toISOString();
+    await dbPut('records', data);
+  } else {
+    const id = await dbAdd('records', data);
+    data.id = id;
+  }
+  currentRecord = data;
+  try { localStorage.removeItem('dongseung_draft'); } catch (_) {}
+
+  // Create improvement items for 개선필요
+  await syncImprovements(data);
+
+  toast(editingRecordId ? '✅ 동승 기록이 수정·저장되었습니다' : '✅ 동승 기록이 저장되었습니다');
+  showScreen('result');
+}
+
+async function syncImprovements(record) {
+  const existing = await dbGetAll('improvements');
+  Object.keys(record.checks || {}).forEach(async key => {
+    const c = record.checks[key];
+    if (c.rating !== '개선필요') return;
+    const already = existing.find(imp =>
+      imp.employeeId === record.employeeId &&
+      imp.itemKey === key &&
+      imp.status !== '개선완료'
+    );
+    if (!already) {
+      await dbAdd('improvements', {
+        employeeId: record.employeeId,
+        employeeName: record.employeeName,
+        itemKey: key,
+        itemText: getQuestionText(key),
+        firstFound: record.date,
+        education: record.memos.coach || c.memo || '',
+        goal: '',
+        nextCheck: '',
+        status: '개선대기',
+        completed: false,
+        recordId: record.id,
+        createdAt: new Date().toISOString()
+      });
+    }
+  });
+}
+
+function generateSummary(data) {
+  const goods = [], improves = [];
+  Object.keys(data.checks || {}).forEach(key => {
+    const c = data.checks[key];
+    if (c.rating === '우수' || c.rating === '양호') goods.push(getQuestionText(key));
+    if (c.rating === '개선필요') improves.push(getQuestionText(key));
+  });
+  let html = `<div class="stat-grid">
+    <div class="stat-card"><div class="num">${goods.length}</div><div class="lbl">양호/우수 항목</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--danger)">${improves.length}</div><div class="lbl">개선 필요 항목</div></div>
+  </div>`;
+  if (goods.length) {
+    html += `<p style="font-weight:600;margin:12px 0 6px;">✅ 잘하고 있는 업무</p><ul style="padding-left:20px;font-size:0.9rem;">${goods.slice(0, 8).map(g => `<li>${g}</li>`).join('')}</ul>`;
+  }
+  if (improves.length) {
+    html += `<p style="font-weight:600;margin:12px 0 6px;">⚠️ 개선이 필요한 업무</p><ul style="padding-left:20px;font-size:0.9rem;">${improves.map(g => `<li>${g}</li>`).join('')}</ul>`;
+  }
+  if (data.memos.coach) html += `<p style="font-weight:600;margin:12px 0 6px;">📚 현장 교육 내용</p><p style="font-size:0.9rem;">${data.memos.coach}</p>`;
+  if (data.memos.next) html += `<p style="font-weight:600;margin:12px 0 6px;">🔍 다음 확인 사항</p><p style="font-size:0.9rem;">${data.memos.next}</p>`;
+  if (data.memos.summary) html += `<p style="font-weight:600;margin:12px 0 6px;">💬 종합 의견</p><p style="font-size:0.9rem;">${data.memos.summary}</p>`;
+  return html;
+}
+
+function generateActivityLog(data) {
+  const improves = [];
+  const goods = [];
+  Object.keys(data.checks || {}).forEach(key => {
+    const c = data.checks[key];
+    if (c.rating === '개선필요') improves.push(getQuestionText(key).replace(/\?$/, ''));
+    if (c.rating === '우수' || c.rating === '양호') goods.push(getQuestionText(key).replace(/\?$/, ''));
+  });
+  let text = `순회사원 동승을 통해 ${data.store || '매장'} 방문 및 업무 수행 현황을 점검함.`;
+  if (goods.length > 0) {
+    const sample = goods.slice(0, 3).map(g => g.split(' ')[0] || g).join(', ');
+    text += ` ${sample} 등은 양호하게 수행하고 있었으며`;
+  }
+  if (improves.length > 0) {
+    const sample = improves.slice(0, 3).map(g => g.split(' ')[0] || g).join(', ');
+    text += `, ${sample} 부분은 보완이 필요하여 현장에서 재교육 진행함.`;
+  } else {
+    text += '.';
+  }
+  if (data.memos.next) {
+    text += ` 다음 동승 시 ${data.memos.next}를 중점적으로 확인하기로 함.`;
+  } else if (improves.length > 0) {
+    text += ` 다음 동승 시 해당 업무의 개선 여부를 중점적으로 확인하기로 함.`;
+  }
+  if (data.memos.summary) text += ` ${data.memos.summary}`;
+  return text;
+}
+
+function generateCoachingReport(data) {
+  let lines = [];
+  lines.push(`[동승 코칭 보고서]`);
+  lines.push(`날짜: ${data.date}`);
+  lines.push(`사원: ${data.employeeName}`);
+  lines.push(`매장: ${data.store}`);
+  lines.push(`차수: ${data.round}`);
+  lines.push('');
+  if (data.memos.good) lines.push(`■ 잘한 점\n${data.memos.good}`);
+  if (data.memos.improve) lines.push(`■ 개선 필요\n${data.memos.improve}`);
+  if (data.memos.coach) lines.push(`■ 현장 교육 내용\n${data.memos.coach}`);
+  if (data.memos.hard) lines.push(`■ 어려워하는 업무\n${data.memos.hard}`);
+  if (data.memos.request) lines.push(`■ 지원 요청\n${data.memos.request}`);
+  if (data.memos.next) lines.push(`■ 다음 확인 사항\n${data.memos.next}`);
+  if (data.memos.summary) lines.push(`■ 종합 의견\n${data.memos.summary}`);
+  const improves = getImproveItems(data);
+  if (improves.length) {
+    lines.push('');
+    lines.push('■ 개선 필요 체크 항목');
+    improves.forEach(k => lines.push(`- ${getQuestionText(k)}`));
+  }
+  return lines.join('\n');
+}
+
+function copyText(idOrText) {
+  let text = '';
+  if (typeof idOrText === 'string' && document.getElementById(idOrText)) {
+    text = document.getElementById(idOrText).innerText || document.getElementById(idOrText).textContent || '';
+  } else {
+    text = String(idOrText || '');
+  }
+  text = text.trim();
+  if (!text) { toast('복사할 내용이 없습니다'); return; }
+
+  // Method 1: modern clipboard API
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(text).then(() => {
+      toast('📋 복사되었습니다');
+    }).catch(() => {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (ok) toast('📋 복사되었습니다');
+    else toast('복사 실패. 길게 눌러 직접 복사해주세요');
+  } catch (e) {
+    toast('복사 실패. 길게 눌러 직접 복사해주세요');
+  }
+}
+
+function printResult() {
+  window.print();
+}
+
+function finishRecord() {
+  // reset checkData
+  Object.keys(checkData).forEach(k => delete checkData[k]);
+  currentPhotos = [];
+  currentRecord = null;
+  editingRecordId = null;
+  showScreen('main');
+}
+
+// ==================== EMPLOYEE ====================
+function matchEmployeeRecord(r, emp) {
+  if (!r || !emp) return false;
+  // match by id (number or string) or by name
+  if (r.employeeId != null && String(r.employeeId) === String(emp.id)) return true;
+  if (r.employeeName && emp.name && r.employeeName.trim() === emp.name.trim()) return true;
+  return false;
+}
+
+async function renderEmployeeList() {
+  try {
+    const emps = await dbGetAll('employees');
+    const records = await dbGetAll('records');
+    const q = (document.getElementById('emp-search')?.value || '').trim().toLowerCase();
+    const filtered = emps.filter(e => !q || (e.name || '').toLowerCase().includes(q));
+    const el = document.getElementById('employee-list');
+    if (!el) return;
+    if (filtered.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="icon">👤</div>등록된 사원이 없습니다.<br>설정에서 사원을 추가하거나 신규 동승에서 이름을 입력하세요.</div>';
+      return;
+    }
+    el.innerHTML = filtered.map(e => {
+      const recs = records.filter(r => matchEmployeeRecord(r, e));
+      const last = recs.slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+      const improveCnt = recs.reduce((s, r) => s + countImprove(r), 0);
+      return `<div class="list-item" onclick="showEmpDetail(${e.id})">
+        <div>
+          <div style="font-weight:600">${e.name}</div>
+          <div class="meta">동승 ${recs.length}회 · 최근 ${last ? last.date : '-'} · 개선필요 누적 ${improveCnt}</div>
+        </div>
+        <span>›</span>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    console.error(err);
+    const el = document.getElementById('employee-list');
+    if (el) el.innerHTML = '<div class="empty-state">목록을 불러오지 못했습니다. 새로고침 해주세요.</div>';
+  }
+}
+
+async function showEmpDetail(empId) {
+  const emp = await dbGet('employees', empId);
+  if (!emp) {
+    toast('사원 정보를 찾을 수 없습니다');
+    return;
+  }
+  const allRecords = await dbGetAll('records');
+  const records = allRecords.filter(r => matchEmployeeRecord(r, emp)).sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.id || 0) - (b.id || 0));
+  const improves = (await dbGetAll('improvements')).filter(i =>
+    (i.employeeId != null && String(i.employeeId) === String(empId)) ||
+    (i.employeeName && emp.name && i.employeeName === emp.name)
+  );
+
+  let html = `<div class="card">
+    <div class="card-title">${emp.name} 역량 현황</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">${records.length}</div><div class="lbl">총 동승 횟수</div></div>
+      <div class="stat-card"><div class="num">${records.length ? records[records.length-1].date : '-'}</div><div class="lbl">최근 동승</div></div>
+    </div>
+  </div>`;
+
+  // Strengths & Weaknesses
+  const ratingCount = {};
+  const itemStats = {};
+  records.forEach(r => {
+    Object.keys(r.checks || {}).forEach(key => {
+      const rating = r.checks[key].rating;
+      if (!rating || rating === '해당없음') return;
+      if (!itemStats[key]) itemStats[key] = { 우수: 0, 양호: 0, 개선필요: 0 };
+      itemStats[key][rating] = (itemStats[key][rating] || 0) + 1;
+    });
+  });
+
+  const strengths = Object.entries(itemStats).filter(([k, v]) => v.우수 + v.양호 > v.개선필요 && (v.우수 + v.양호) >= 1).slice(0, 5);
+  const weaknesses = Object.entries(itemStats).filter(([k, v]) => v.개선필요 >= 2).sort((a, b) => b[1].개선필요 - a[1].개선필요);
+
+  html += `<div class="card"><div class="card-title">💪 업무별 강점</div>`;
+  if (strengths.length) {
+    html += strengths.map(([k, v]) => `<div class="tag">${getQuestionText(k).slice(0, 20)}… (우수/양호 ${v.우수 + v.양호})</div>`).join('');
+  } else html += '<p style="color:var(--text-secondary)">아직 충분한 데이터가 없습니다.</p>';
+  html += `</div>`;
+
+  html += `<div class="card"><div class="card-title">⚠️ 반복 개선 필요 항목</div>`;
+  if (weaknesses.length) {
+    html += weaknesses.map(([k, v]) => `<div class="list-item highlight-repeat" style="cursor:default">
+      <div><div style="font-weight:600">${getQuestionText(k)}</div><div class="meta">개선필요 ${v.개선필요}회 반복</div></div>
+      <span class="badge badge-개선필요">${v.개선필요}</span>
+    </div>`).join('');
+  } else html += '<p style="color:var(--text-secondary)">반복 개선 필요 항목이 없습니다.</p>';
+  html += `</div>`;
+
+  // Growth chart (simple bars)
+  if (records.length >= 1) {
+    html += `<div class="card"><div class="card-title">📈 평가 변화 (최근 동승 기준)</div><div class="bar-chart">`;
+    const lastRec = records[records.length - 1];
+    let 우수 = 0, 양호 = 0, 개선 = 0;
+    Object.values(lastRec.checks || {}).forEach(c => {
+      if (c.rating === '우수') 우수++;
+      if (c.rating === '양호') 양호++;
+      if (c.rating === '개선필요') 개선++;
+    });
+    const total = 우수 + 양호 + 개선 || 1;
+    html += barRow('우수', 우수, total, 'var(--success)');
+    html += barRow('양호', 양호, total, 'var(--info)');
+    html += barRow('개선필요', 개선, total, 'var(--danger)');
+    html += `</div></div>`;
+  }
+
+  // Compare last two
+  if (records.length >= 2) {
+    const prev = records[records.length - 2];
+    const curr = records[records.length - 1];
+    html += `<div class="card"><div class="card-title">🔄 최근 2회 비교 (${prev.date} → ${curr.date})</div>`;
+    html += `<table class="compare-table"><thead><tr><th>항목</th><th>이전</th><th>이번</th><th>결과</th></tr></thead><tbody>`;
+    const keys = new Set([...Object.keys(prev.checks || {}), ...Object.keys(curr.checks || {})]);
+    keys.forEach(key => {
+      const pr = prev.checks?.[key]?.rating || '-';
+      const cr = curr.checks?.[key]?.rating || '-';
+      if (pr === '해당없음' && cr === '해당없음') return;
+      if (pr === '-' && cr === '-') return;
+      const result = classifyChange(pr, cr);
+      html += `<tr>
+        <td style="text-align:left;font-size:0.8rem;">${getQuestionText(key).slice(0, 25)}</td>
+        <td><span class="badge badge-${pr}">${pr}</span></td>
+        <td><span class="badge badge-${cr}">${cr}</span></td>
+        <td><span class="badge badge-${result.class}">${result.label}</span></td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+
+  // Recent coaching
+  html += `<div class="card"><div class="card-title">📚 최근 코칭 내용</div>`;
+  const recentWithMemo = records.filter(r => r.memos?.coach || r.memos?.next).slice(-3).reverse();
+  if (recentWithMemo.length) {
+    recentWithMemo.forEach(r => {
+      html += `<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+        <div class="meta">${r.date}</div>
+        ${r.memos.coach ? `<p style="font-size:0.9rem;"><b>교육:</b> ${r.memos.coach}</p>` : ''}
+        ${r.memos.next ? `<p style="font-size:0.9rem;"><b>다음확인:</b> ${r.memos.next}</p>` : ''}
+      </div>`;
+    });
+  } else html += '<p style="color:var(--text-secondary)">기록된 코칭 내용이 없습니다.</p>';
+  html += `</div>`;
+
+  // History list
+  html += `<div class="card"><div class="card-title">📂 동승 이력</div>`;
+  records.slice().reverse().forEach(r => {
+    html += `<div class="list-item" onclick="viewRecord(${r.id})">
+      <div>
+        <div style="font-weight:600">${r.date} · ${r.store || ''} · ${r.round || ''}</div>
+        <div class="meta">개선필요 ${countImprove(r)}건</div>
+      </div>
+      <span>›</span>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<button class="btn btn-outline" onclick="showScreen('employee')" style="margin-top:12px;">← 목록으로</button>`;
+
+  document.getElementById('emp-detail-content').innerHTML = html;
+  showScreen('emp-detail');
+}
+
+function barRow(label, val, total, color) {
+  const pct = Math.round(val / total * 100);
+  return `<div class="bar-row"><div class="bar-label">${label}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><div style="width:40px;text-align:right;font-size:0.85rem;">${val}</div></div>`;
+}
+
+function classifyChange(prev, curr) {
+  if (prev === '개선필요' && (curr === '양호' || curr === '우수')) return { label: '개선완료', class: '개선완료' };
+  if (prev === '개선필요' && curr === '개선필요') return { label: '개선미흡', class: '개선미흡' };
+  if (prev === '양호' && curr === '우수') return { label: '향상', class: '개선완료' };
+  if (prev === '우수' && curr === '우수') return { label: '우수유지', class: '우수유지' };
+  if (prev === '우수' && (curr === '양호' || curr === '개선필요')) return { label: '하락', class: '개선미흡' };
+  if (prev === '양호' && curr === '개선필요') return { label: '하락', class: '개선미흡' };
+  if (prev === '양호' && curr === '양호') return { label: '유지', class: '우수유지' };
+  if (curr === '개선필요') return { label: '개선필요', class: '개선미흡' };
+  return { label: '유지', class: '우수유지' };
+}
+
+// ==================== RECORDS ====================
+async function renderRecordsList() {
+  let records = await dbGetAll('records');
+  const q = (document.getElementById('rec-search')?.value || '').trim().toLowerCase();
+  const round = document.getElementById('rec-filter-round')?.value || '';
+  if (q) {
+    records = records.filter(r =>
+      (r.employeeName || '').toLowerCase().includes(q) ||
+      (r.store || '').toLowerCase().includes(q) ||
+      (r.date || '').includes(q)
+    );
+  }
+  if (round) records = records.filter(r => r.round === round);
+  records.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const el = document.getElementById('records-list');
+  if (records.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">📂</div>기록이 없습니다.</div>';
+    return;
+  }
+  el.innerHTML = records.map(r => `
+    <div class="list-item" onclick="viewRecord(${r.id})">
+      <div>
+        <div style="font-weight:600">${r.employeeName || ''} · ${r.store || ''}</div>
+        <div class="meta">${r.date} · ${r.round || ''} · 개선 ${countImprove(r)}건</div>
+      </div>
+      <span>›</span>
+    </div>
+  `).join('');
+}
+
+async function viewRecord(id) {
+  const r = await dbGet('records', id);
+  if (!r) return;
+  // Simple view in result-like screen
+  let html = `<div class="card">
+    <div class="card-title">${r.date} 동승 기록</div>
+    <p><b>사원:</b> ${r.employeeName} &nbsp; <b>매장:</b> ${r.store}</p>
+    <p><b>차수:</b> ${r.round} &nbsp; <b>목적:</b> ${r.purpose || '-'}</p>
+    ${r.note ? `<p><b>특이사항:</b> ${r.note}</p>` : ''}
+  </div>`;
+  html += generateSummary(r);
+  if (r.photos && r.photos.length) {
+    html += `<div class="card"><div class="card-title">📷 첨부 사진 (${r.photos.length})</div><div class="photo-grid">`;
+    r.photos.forEach(p => {
+      html += `<div class="photo-item"><img src="${p.dataUrl}" onclick="window.open(this.src)"></div>`;
+    });
+    html += `</div></div>`;
+  }
+  const actLog = generateActivityLog(r);
+  html += `<div class="card"><div class="card-title">📄 활동일보</div>
+    <div class="summary-box" id="view-activity-log">${actLog.replace(/</g,'&lt;')}</div>
+    <button class="btn btn-outline btn-sm" onclick="copyText('view-activity-log')" style="margin-top:8px;">📋 활동일보 복사</button>
+  </div>`;
+  html += `<div class="btn-group" style="margin-top:16px;">
+    <button class="btn btn-outline" onclick="editRecord(${id})">수정</button>
+    <button class="btn btn-danger" onclick="deleteRecord(${id})">삭제</button>
+    <button class="btn btn-primary" onclick="showScreen('records')">목록</button>
+  </div>`;
+  document.getElementById('emp-detail-content').innerHTML = html;
+  showScreen('emp-detail');
+}
+
+async function editRecord(id) {
+  const r = await dbGet('records', id);
+  if (!r) return;
+  editingRecordId = id;
+  showScreen('new');
+  await loadEmployeeSelect();
+  await loadStoreList();
+  // wait a bit for DOM
+  setTimeout(() => {
+    document.getElementById('rec-date').value = r.date || '';
+    document.getElementById('rec-employee').value = r.employeeName || '';
+    document.getElementById('rec-store').value = r.store || '';
+    document.getElementById('rec-purpose').value = r.purpose || '';
+    document.getElementById('rec-round').value = r.round || '최초';
+    document.getElementById('rec-note').value = r.note || '';
+    if (r.memos) {
+      document.getElementById('memo-good').value = r.memos.good || '';
+      document.getElementById('memo-improve').value = r.memos.improve || '';
+      document.getElementById('memo-coach').value = r.memos.coach || '';
+      document.getElementById('memo-hard').value = r.memos.hard || '';
+      document.getElementById('memo-request').value = r.memos.request || '';
+      document.getElementById('memo-next').value = r.memos.next || '';
+      document.getElementById('memo-summary').value = r.memos.summary || '';
+    }
+    Object.keys(checkData).forEach(k => delete checkData[k]);
+    buildChecklist();
+    if (r.checks) {
+      Object.keys(r.checks).forEach(key => {
+        checkData[key] = r.checks[key];
+        if (r.checks[key].rating) setRating(key, r.checks[key].rating);
+        if (r.checks[key].memo) {
+          const el = document.getElementById('memotext-' + key);
+          if (el) el.value = r.checks[key].memo;
+        }
+      });
+    }
+    currentPhotos = (r.photos || []).map(p => ({ ...p, id: Date.now() + Math.random().toString(36).slice(2) }));
+    renderPhotoPreview();
+    updateProgress();
+    if (r.employeeId) showPrevCompare(r.employeeId);
+  }, 100);
+}
+
+async function deleteRecord(id) {
+  if (!confirm('이 동승 기록을 정말 삭제하시겠습니까?\n삭제 후 복구할 수 없습니다.')) return;
+  try {
+    await dbDelete('records', id);
+    toast('🗑️ 동승 기록이 삭제되었습니다');
+    // also refresh improvements if needed
+    showScreen('records');
+    renderRecordsList();
+  } catch (e) {
+    toast('삭제 중 오류가 발생했습니다');
+  }
+}
+
+// ==================== IMPROVEMENTS ====================
+async function renderImprovements() {
+  const list = await dbGetAll('improvements');
+  list.sort((a, b) => (b.firstFound || '').localeCompare(a.firstFound || ''));
+  const el = document.getElementById('improvements-list');
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">📈</div>등록된 개선사항이 없습니다.<br>동승 기록 시 개선필요 항목이 자동으로 추가됩니다.</div>';
+    return;
+  }
+  el.innerHTML = list.map(imp => `
+    <div class="list-item" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:600">${imp.employeeName} · ${imp.itemText?.slice(0, 30) || imp.itemKey}</div>
+          <div class="meta">발견: ${imp.firstFound} · ${imp.status}</div>
+        </div>
+        <span class="badge badge-${imp.status === '개선완료' ? '개선완료' : '개선필요'}">${imp.status}</span>
+      </div>
+      <div class="btn-group" style="width:100%;">
+        ${imp.status !== '개선완료' ? `<button class="btn btn-sm btn-success" onclick="updateImpStatus(${imp.id},'개선완료')">완료 처리</button>` : ''}
+        ${imp.status === '개선대기' ? `<button class="btn btn-sm btn-outline" onclick="updateImpStatus(${imp.id},'교육완료')">교육완료</button>` : ''}
+        <button class="btn btn-sm btn-outline" onclick="updateImpStatus(${imp.id},'개선확인중')">확인중</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteImp(${imp.id})">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function updateImpStatus(id, status) {
+  const imp = await dbGet('improvements', id);
+  if (!imp) return;
+  imp.status = status;
+  imp.completed = status === '개선완료';
+  await dbPut('improvements', imp);
+  toast('상태 변경됨');
+  renderImprovements();
+}
+
+async function deleteImp(id) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  await dbDelete('improvements', id);
+  renderImprovements();
+}
+
+// ==================== SETTINGS ====================
+async function renderSettings() {
+  const emps = await dbGetAll('employees');
+  const stores = await dbGetAll('stores');
+  document.getElementById('settings-emp-list').innerHTML = emps.map(e => `
+    <div class="list-item">
+      <span>${e.name}</span>
+      <button class="btn btn-sm btn-danger" onclick="deleteEmployee(${e.id})">삭제</button>
+    </div>
+  `).join('') || '<p style="color:var(--text-secondary);padding:8px;">등록된 사원 없음</p>';
+  document.getElementById('settings-store-list').innerHTML = stores.map(s => `
+    <div class="list-item">
+      <span>${s.name}</span>
+      <button class="btn btn-sm btn-danger" onclick="deleteStore(${s.id})">삭제</button>
+    </div>
+  `).join('') || '<p style="color:var(--text-secondary);padding:8px;">등록된 매장 없음</p>';
+}
+
+async function addEmployee() {
+  const name = document.getElementById('new-emp-name').value.trim();
+  if (!name) return;
+  await addEmployeeByName(name);
+  document.getElementById('new-emp-name').value = '';
+  renderSettings();
+}
+async function addStore() {
+  const name = document.getElementById('new-store-name').value.trim();
+  if (!name) return;
+  await addStoreByName(name);
+  document.getElementById('new-store-name').value = '';
+  renderSettings();
+}
+async function deleteEmployee(id) {
+  if (!confirm('사원을 삭제하시겠습니까? (관련 기록은 유지됩니다)')) return;
+  await dbDelete('employees', id);
+  renderSettings();
+}
+async function deleteStore(id) {
+  if (!confirm('매장을 삭제하시겠습니까?')) return;
+  await dbDelete('stores', id);
+  renderSettings();
+}
+
+async function importEmployeeCSV(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const names = parseNameList(text);
+    if (names.length === 0) { toast('사원명을 찾을 수 없습니다'); return; }
+    let added = 0;
+    const existing = await dbGetAll('employees');
+    const existSet = new Set(existing.map(x => x.name));
+    for (const name of names) {
+      if (!existSet.has(name)) {
+        await dbAdd('employees', { name, createdAt: new Date().toISOString() });
+        existSet.add(name);
+        added++;
+      }
+    }
+    toast(`${added}명 사원 추가 완료 (총 ${names.length}개 중)`);
+    renderSettings();
+    await loadEmployeeSelect();
+  } catch (err) {
+    toast('가져오기 실패: ' + err.message);
+  }
+  e.target.value = '';
+}
+
+async function importStoreCSV(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const names = parseNameList(text);
+    if (names.length === 0) { toast('매장명을 찾을 수 없습니다'); return; }
+    let added = 0;
+    const existing = await dbGetAll('stores');
+    const existSet = new Set(existing.map(x => x.name));
+    for (const name of names) {
+      if (!existSet.has(name)) {
+        await dbAdd('stores', { name, createdAt: new Date().toISOString() });
+        existSet.add(name);
+        added++;
+      }
+    }
+    toast(`${added}개 매장 추가 완료 (총 ${names.length}개 중)`);
+    renderSettings();
+    await loadStoreList();
+  } catch (err) {
+    toast('가져오기 실패: ' + err.message);
+  }
+  e.target.value = '';
+}
+
+function parseNameList(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (lines.length === 0) return [];
+  // remove header if looks like header
+  const headerLike = /사원|이름|name|매장|store|담당|직원/i;
+  let start = 0;
+  if (headerLike.test(lines[0]) && lines[0].length < 30) start = 1;
+  
+  const names = [];
+  for (let i = start; i < lines.length; i++) {
+    let line = lines[i];
+    // CSV: take first column
+    if (line.includes(',')) {
+      const cols = line.split(',').map(c => c.replace(/^["']|["']$/g, '').trim());
+      // try to find name-like column
+      line = cols.find(c => c && !/^\d+$/.test(c) && c.length >= 2) || cols[0];
+    }
+    line = line.replace(/^["']|["']$/g, '').trim();
+    if (line && line.length >= 2 && line.length < 50) names.push(line);
+  }
+  // unique
+  return [...new Set(names)];
+}
+
+// ==================== BACKUP ====================
+async function exportJSON() {
+  const data = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    employees: await dbGetAll('employees'),
+    stores: await dbGetAll('stores'),
+    records: await dbGetAll('records'),
+    improvements: await dbGetAll('improvements')
+  };
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `동승코칭노트_백업_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('백업 파일이 다운로드되었습니다');
+}
+
+async function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!confirm('기존 데이터를 덮어쓰고 복원하시겠습니까?')) { e.target.value = ''; return; }
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    await dbClear('employees');
+    await dbClear('stores');
+    await dbClear('records');
+    await dbClear('improvements');
+    for (const e of (data.employees || [])) await dbAdd('employees', e);
+    for (const s of (data.stores || [])) await dbAdd('stores', s);
+    for (const r of (data.records || [])) await dbAdd('records', r);
+    for (const i of (data.improvements || [])) await dbAdd('improvements', i);
+    toast('복원 완료');
+    showScreen('main');
+  } catch (err) {
+    toast('복원 실패: ' + err.message);
+  }
+  e.target.value = '';
+}
+
+function buildExportRows() {
+  return dbGetAll('records').then(records => {
+    records = records.slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const header = ['날짜','사원','매장','차수','목적','우수','양호','개선필요','잘한점','개선필요내용','교육내용','다음확인','종합의견'];
+    const rows = records.map(r => {
+      let 우수 = 0, 양호 = 0, 개선 = 0;
+      Object.values(r.checks || {}).forEach(c => {
+        if (c.rating === '우수') 우수++;
+        if (c.rating === '양호') 양호++;
+        if (c.rating === '개선필요') 개선++;
+      });
+      return [
+        r.date || '', r.employeeName || '', r.store || '', r.round || '', r.purpose || '',
+        우수, 양호, 개선,
+        (r.memos && r.memos.good) || '',
+        (r.memos && r.memos.improve) || '',
+        (r.memos && r.memos.coach) || '',
+        (r.memos && r.memos.next) || '',
+        (r.memos && r.memos.summary) || ''
+      ];
+    });
+    return { header, rows, count: records.length };
+  });
+}
+
+function rowsToTSV(header, rows) {
+  // 탭 구분 → 구글시트/엑셀 붙여넣기에 최적
+  const esc = (v) => String(v == null ? '' : v).replace(/\t/g, ' ').replace(/\r?\n/g, ' ');
+  const lines = [header.map(esc).join('\t')];
+  rows.forEach(row => lines.push(row.map(esc).join('\t')));
+  return lines.join('\n');
+}
+
+function rowsToCSV(header, rows) {
+  const esc = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const lines = [header.map(esc).join(',')];
+  rows.forEach(row => lines.push(row.map(esc).join(',')));
+  return '\uFEFF' + lines.join('\n');
+}
+
+async function copyForSheets() {
+  try {
+    const { header, rows, count } = await buildExportRows();
+    if (count === 0) {
+      toast('내보낼 동승 기록이 없습니다. 먼저 기록을 저장하세요.');
+      return;
+    }
+    const tsv = rowsToTSV(header, rows);
+    // 미리보기도 채워두기
+    const preview = document.getElementById('export-preview-text');
+    if (preview) preview.value = tsv;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(tsv);
+      toast('📋 ' + count + '건 복사됨 → 구글시트/엑셀에서 붙여넣기 하세요');
+    } else {
+      fallbackCopy(tsv);
+      toast('📋 복사됨 → 구글시트에서 붙여넣기');
+    }
+  } catch (e) {
+    toast('복사 실패. 미리보기에서 직접 복사해 주세요');
+    showExportPreview();
+  }
+}
+
+async function showExportPreview() {
+  const { header, rows, count } = await buildExportRows();
+  const box = document.getElementById('export-preview-box');
+  const ta = document.getElementById('export-preview-text');
+  if (!box || !ta) return;
+  if (count === 0) {
+    ta.value = '(저장된 동승 기록이 없습니다)';
+  } else {
+    ta.value = rowsToTSV(header, rows);
+  }
+  box.style.display = 'block';
+  ta.focus();
+  ta.select();
+  toast(count + '건 미리보기 — 길게 눌러 복사 가능');
+}
+
+async function exportExcel() {
+  try {
+    const { header, rows, count } = await buildExportRows();
+    if (count === 0) {
+      toast('내보낼 동승 기록이 없습니다. 먼저 기록을 저장하세요.');
+      return;
+    }
+    const csv = rowsToCSV(header, rows);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '동승기록_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 500);
+    toast('CSV 다운로드 시도함. 안 되면 「구글시트용 복사」를 사용하세요');
+  } catch (e) {
+    toast('다운로드 실패. 「구글시트용 복사」를 사용하세요');
+    showExportPreview();
+  }
+}
+
+async function confirmClearAll() {
+  if (!confirm('정말로 모든 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+  if (!confirm('백업을 하셨나요? 계속하시겠습니까?')) return;
+  await dbClear('employees');
+  await dbClear('stores');
+  await dbClear('records');
+  await dbClear('improvements');
+  await dbClear('photos');
+  try { localStorage.removeItem('dongseung_draft'); } catch (_) {}
+  toast('🗑️ 전체 데이터가 삭제되었습니다');
+  showScreen('main');
+}
+
+// ==================== SEED DATA (from 조직도 spreadsheet) ====================
+const SEED_EMPLOYEES = ['김강순', '김려영', '박은미', '신선미', '유수경'];
+
+// 사원별 담당 매장 (조직도 기준)
+const EMP_STORES = {
+  '김강순': [
+    '(유)남광주식자재13005(구슈퍼센터)', '(유)대양식자재마트', '(주) 거경(농민)',
+    '(주)파워식자재도매센터(상무)', '(주)해동물류(영광)와이', '가람식자재마트(하남)',
+    '모두와(주)구에스엠(호반)', '에스엠계림', '온마켓(화정점)', '와이식자재주월(구 다온)'
+  ],
+  '김려영': [
+    '(주)와이마트도매유통', '(주)팜스식자재마트*(장성)', '가람식자재마트(수완첨단)',
+    '각화물류', '다팜푸드(빅푸드첨단)', '롯데마트(나주)', '롯데슈퍼(두암_롯데직영)',
+    '법진(빛가람동)', '부지런한행암(구.빅행암)', '부지런한행암(용산점)',
+    '에프엠마트(지산)신규', '이마트에브리데이나주혁신'
+  ],
+  '박은미': [
+    '(주)와이식자제이안유통', '대진물산(과세)', '빅팜(과세) 비엘', '에스제이영 유한회사',
+    '여수식자재마트 여서', '올마켓 신대점', '주)엠엔에스(과세)', '주식회사조연(서면와이)'
+  ],
+  '신선미': [
+    '(주)광주도매양산점', '(주)찬해유통(운암)신규', '(주)팜스식자재마트(담양)',
+    'e식자재마트(화순)', '뉴아람식자재마트(오치점)', '롯데슈퍼(문흥_롯데직영)',
+    '부지런한식자재(동림)신규', '선원(영암용두)', '승우(담양)', '엠식자재도매센터(우산)',
+    '유) 에프엠푸드(매곡)', '유한회사 뉴태진 (용봉)', '이마트에브리데이일곡동점'
+  ],
+  '유수경': [
+    '(유)다농푸드', '(주)와이식자재(무안)(*)', '(주)최상Y식자재마트', '(주)파머스삼호점',
+    '(주)파워식자제 도매센터 목포점', '다팜주식회사', '롯데슈퍼(목포용해_롯데직영)',
+    '롯데슈퍼(목포하당_롯데직영)', '삼진종합물류', '유한회사바른리테일해남점',
+    '유한회사해남식자재마트', '청담'
+  ]
+};
+
+const SEED_STORES = [
+  '(유)남광주식자재13005(구슈퍼센터)', '(유)다농푸드', '(유)대양식자재마트',
+  '(주) 거경(농민)', '(주)광주도매양산점', '(주)와이마트도매유통',
+  '(주)와이식자재(무안)(*)', '(주)와이식자제이안유통', '(주)찬해유통(운암)신규',
+  '(주)최상Y식자재마트', '(주)파머스삼호점', '(주)파워식자재도매센터(상무)',
+  '(주)파워식자제 도매센터 목포점', '(주)팜스식자재마트(담양)', '(주)팜스식자재마트*(장성)',
+  '(주)해동물류(영광)와이', 'e식자재마트(화순)', '가람식자재마트(수완첨단)',
+  '가람식자재마트(하남)', '각화물류', '뉴아람식자재마트(오치점)',
+  '다팜주식회사', '다팜푸드(빅푸드첨단)', '대진물산(과세)',
+  '롯데마트(나주)', '롯데슈퍼(두암_롯데직영)', '롯데슈퍼(목포용해_롯데직영)',
+  '롯데슈퍼(목포하당_롯데직영)', '롯데슈퍼(문흥_롯데직영)',
+  '모두와(주)구에스엠(호반)', '법진(빛가람동)', '부지런한식자재(동림)신규',
+  '부지런한행암(구.빅행암)', '부지런한행암(용산점)', '빅팜(과세) 비엘',
+  '삼진종합물류', '선원(영암용두)', '승우(담양)',
+  '에스엠계림', '에스제이영 유한회사', '에프엠마트(지산)신규',
+  '엠식자재도매센터(우산)', '여수식자재마트 여서', '온마켓(화정점)',
+  '올마켓 신대점', '와이식자재주월(구 다온)', '유) 에프엠푸드(매곡)',
+  '유한회사 뉴태진 (용봉)', '유한회사바른리테일해남점', '유한회사해남식자재마트',
+  '이마트에브리데이나주혁신', '이마트에브리데이일곡동점',
+  '주)엠엔에스(과세)', '주식회사조연(서면와이)', '청담'
+];
+
+// ==================== INIT ====================
+async function init() {
+  try {
+    await openDB();
+    const emps = await dbGetAll('employees');
+    if (emps.length === 0) {
+      for (const name of SEED_EMPLOYEES) {
+        await dbAdd('employees', { name, createdAt: new Date().toISOString() });
+      }
+      for (const name of SEED_STORES) {
+        await dbAdd('stores', { name, createdAt: new Date().toISOString() });
+      }
+      const modeLabel = storageMode === 'ls' ? '' : ' (메모리)';
+      toast('사원 5명 · 매장 55개 등록 완료' + modeLabel);
+    }
+    renderMain();
+  } catch (e) {
+    // absolute last resort
+    storageMode = 'mem';
+    try {
+      for (const name of SEED_EMPLOYEES) await dbAdd('employees', { name, createdAt: new Date().toISOString() });
+      for (const name of SEED_STORES) await dbAdd('stores', { name, createdAt: new Date().toISOString() });
+      renderMain();
+      toast('메모리 모드로 실행 중');
+    } catch (e2) {
+      // silent - UI still loads
+      renderMain();
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>
